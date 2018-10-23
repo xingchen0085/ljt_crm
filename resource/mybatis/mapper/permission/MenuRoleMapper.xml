@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.douples.pay.permission.dao.impl.MenuRoleDaoImpl">
+
+	<sql id="t_sys_menu_role"> T_SYS_MENU_ROLE </sql>
+
+	<insert id="insert" parameterType="com.douples.pay.permission.entity.MenuRole">
+		insert into
+		<include refid="t_sys_menu_role" />
+		(id,version,status,create_date,create_time,create_user_id,create_user_name,
+        update_date,update_time,update_user_id,update_user_name, remark,
+		role_id,menu_id
+		) values
+		( #{id},0,#{status}, #{createDate,jdbcType=DATE},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{createUserId,jdbcType=DECIMAL},
+        #{createUserName,jdbcType=VARCHAR},
+        #{updateDate,jdbcType=DATE},
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{updateUserId,jdbcType=DECIMAL},
+        #{updateUserName,jdbcType=VARCHAR},
+        #{remark},
+		#{roleId,jdbcType=INTEGER},
+		#{menuId,jdbcType=INTEGER}
+		)
+	</insert>
+
+	<delete id="deleteById" parameterType="java.util.Map">
+		delete from
+		<include refid="t_sys_menu_role" />
+		where ID = #{id}
+	</delete>
+
+	<select id="selectByPrimaryKey" parameterType="string" resultType="com.douples.pay.permission.entity.MenuRole">
+		select
+		d.id,d.version,d.status,d.create_user_name as "createUserName",
+		d.create_time as "createTime", d.update_user_name as "updateUserName",
+		d.update_time as "updateTime", d.remark,
+		d.role_id as "roleId",
+		d.menu_id as "menuId"
+		from
+		<include refid="t_sys_menu_role" />
+		d
+		where d.id = #{id}
+	</select>
+
+	<select id="listByRoleId" parameterType="long" resultType="com.douples.pay.permission.entity.MenuRole">
+		select d.id as "id",
+		d.role_id as "roleId",
+		d.menu_id as "menuId"
+		from
+		<include refid="t_sys_menu_role" />
+		d
+		where role_id = #{roleId}
+	</select>
+
+	<select id="listPage" parameterType="java.util.Map" resultType="com.douples.pay.permission.entity.MenuRole">
+		select d.id as "id",
+		d.role_id as "roleId",
+		d.menu_id as "menuId"
+		from
+		<include refid="t_sys_menu_role" />
+		d
+		order by id desc
+	</select>
+
+	<select id="listPageCount" parameterType="java.util.Map" resultType="long">
+		SELECT COUNT(1) FROM
+		<include refid="t_sys_menu_role" />
+		D
+	</select>
+
+	<delete id="deleteByRoleId" parameterType="long">
+		delete from
+		<include refid="t_sys_menu_role" />
+		where role_id = #{roleId}
+	</delete>
+
+</mapper>

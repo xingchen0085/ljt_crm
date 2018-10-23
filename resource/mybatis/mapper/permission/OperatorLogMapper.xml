@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.douples.pay.permission.dao.impl.OperatorLogDaoImpl">
+
+	<!-- Pms权限管理：操作员操作日志表 -->
+	<sql id="t_sys_operator_log"> T_SYS_OPERATOR_LOG </sql>
+
+	<resultMap id="beanMap" type="com.douples.pay.permission.entity.OperatorLog">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="version" property="version" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="CREATE_DATE" property="createDate" jdbcType="DATE"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="CREATE_USER_ID" property="createUserId" jdbcType="DECIMAL"/>
+        <result column="CREATE_USER_NAME" property="createUserName" jdbcType="VARCHAR"/>
+
+        <result column="UPDATE_DATE" property="updateDate" jdbcType="DATE"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_USER_ID" property="updateUserId" jdbcType="DECIMAL"/>
+        <result column="UPDATE_USER_NAME" property="updateUserName" jdbcType="VARCHAR"/>
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="operator_id" property="operatorId" />
+		<result column="operator_name" property="operatorName" />
+		<result column="operate_type" property="operateType" />
+		<result column="ip" property="ip" />
+		<result column="content" property="content" />
+	</resultMap>
+
+	<insert id="insert" parameterType="com.douples.pay.permission.entity.OperatorLog" keyProperty="id" useGeneratedKeys="true">
+		insert into
+		<include refid="t_sys_operator_log" />
+		(id,version,status,create_date,create_time,create_user_id,create_user_name,
+        update_date,update_time,update_user_id,update_user_name, remark, operator_id, operator_name,operate_type,ip,content)
+		values
+		(#{id},0,#{status}, #{createDate,jdbcType=DATE},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{createUserId,jdbcType=DECIMAL},
+        #{createUserName,jdbcType=VARCHAR},
+        #{updateDate,jdbcType=DATE},
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{updateUserId,jdbcType=DECIMAL},
+        #{updateUserName,jdbcType=VARCHAR},
+        #{remark},#{operatorId},#{operatorName},#{operateType},#{ip}, #{content})
+	</insert>
+
+	<select id="selectByPrimaryKey" parameterType="Long" resultType="com.douples.pay.permission.entity.OperatorLog">
+		select * from
+		<include refid="t_sys_operator_log" />
+		where id = #{id}
+	</select>
+
+	<sql id="condition_sql">
+		<!-- Equal query -->
+		<if test="operatorName != null and operatorName != ''"> and operator_name = #{operatorName}</if>
+		<if test="operateType != null and operateType != ''"> and operate_type = #{operateType}</if>
+		<if test="status != null and status != ''"> and status = #{status}</if>
+		<if test="ip != null and ip != ''"> and ip = #{ip}</if>
+		<if test="beginDate != null and beginDate != '' and endDate != null and endDate != ''">
+			and create_time between #{beginDate} and CONCAT(#{endDate}, '
+			23:59:59')
+		</if>
+	</sql>
+
+	<select id="listPage" parameterType="java.util.Map" resultMap="beanMap">
+		select * from
+		<include refid="t_sys_operator_log" />
+		<where>
+			<include refid="condition_sql" />
+		</where>
+		<![CDATA[ order by ID desc]]>
+	</select>
+
+	<select id="listPageCount" parameterType="java.util.Map" resultType="long">
+		select count(1) from
+		<include refid="t_sys_operator_log" />
+		<where>
+			<include refid="condition_sql" />
+		</where>
+	</select>
+
+</mapper>

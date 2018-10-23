@@ -1,0 +1,72 @@
+.whiteTab {
+    background-color: #ffffff !important;
+    padding: 0px !important;
+}
+
+.remarkClass {
+    height: 86px !important;
+    width: 620px !important;
+    background-color: transparent !important;
+}
+.remarkDl {
+    height:auto !important;
+    width:auto !important;
+}
+.remarkDl dd {
+    height:auto !important;
+    width:auto !important;
+}
+.remarkDl textarea {
+    height: 86px !important;
+    width: 620px !important;
+    background-color: transparent !important;
+}
+
+/*小徽章，感谢amazeUI源码提供*/
+.am-badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 0.25em 0.625em;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    line-height: 1;
+    vertical-align: baseline;
+    white-space: nowrap;
+    text-align: center;
+    background-color: #999999;
+    border-radius: 0;
+}
+.am-badge:empty {
+    display: none;
+}
+.am-badge.am-square {
+    border-radius: 0;
+}
+.am-badge.am-radius {
+    border-radius: 2px;
+}
+.am-badge.am-round {
+    border-radius: 1000px;
+}
+a.am-badge:hover,
+a.am-badge:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+.am-badge-primary {
+    background-color: #0e90d2;
+}
+.am-badge-secondary {
+    background-color: #3bb4f2;
+}
+.am-badge-success {
+    background-color: #5eb95e;
+}
+.am-badge-warning {
+    background-color: #F37B1D;
+}
+.am-badge-danger {
+    background-color: #dd514c;
+}

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.douples.pay.user.dao.impl.UserInfoDaoImpl">
+    <resultMap id="BaseResultMap" type="com.douples.pay.user.entity.UserInfo">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <!--<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>-->
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="user_no" property="userNo" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="account_no" property="accountNo" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="pay_pwd" property="payPwd" jdbcType="VARCHAR"/>
+
+
+        <!-- 1-15新增时间字段/chenxinghua-->
+        <result column="CREATE_DATE" property="createDate" jdbcType="DATE"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="CREATE_USER_ID" property="createUserId" jdbcType="DECIMAL"/>
+        <result column="CREATE_USER_NAME" property="createUserName" jdbcType="VARCHAR"/>
+
+        <result column="UPDATE_DATE" property="updateDate" jdbcType="DATE"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_USER_ID" property="updateUserId" jdbcType="DECIMAL"/>
+        <result column="UPDATE_USER_NAME" property="updateUserName" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, create_time, status, user_no, user_name, account_no, mobile, password, pay_pwd,
+    CREATE_DATE,
+    CREATE_TIME,
+    CREATE_USER_ID,
+    CREATE_USER_NAME,
+    UPDATE_DATE,
+    UPDATE_TIME,
+    UPDATE_USER_ID,
+    UPDATE_USER_NAME
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user_info
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_user_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="insert" parameterType="com.douples.pay.user.entity.UserInfo">
+    insert into t_user_info (id, status,
+      user_no, user_name, account_no, mobile, password,
+      pay_pwd,
+      create_date,create_time,create_user_id,create_user_name,
+      update_date,update_time,update_user_id,update_user_name
+      )
+    values (
+            #{id,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+            #{userNo,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{accountNo,jdbcType=VARCHAR},
+            #{mobile,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},#{payPwd,jdbcType=VARCHAR},
+            #{createDate,jdbcType=DATE},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{createUserId,jdbcType=DECIMAL},
+            #{createUserName,jdbcType=VARCHAR},
+            #{updateDate,jdbcType=DATE},
+            #{updateTime,jdbcType=TIMESTAMP},
+            #{updateUserId,jdbcType=DECIMAL},
+            #{updateUserName,jdbcType=VARCHAR}
+      )
+  </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.douples.pay.user.entity.UserInfo">
+    update t_user_info
+    set
+        status = #{status,jdbcType=VARCHAR},
+        user_no = #{userNo,jdbcType=VARCHAR},
+        user_name = #{userName,jdbcType=VARCHAR},
+        account_no = #{accountNo,jdbcType=VARCHAR},
+        mobile = #{mobile,jdbcType=VARCHAR},
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+        UPDATE_DATE = #{updateDate,jdbcType=DATE},
+        UPDATE_USER_ID = #{updateUserId,jdbcType=BIGINT},
+        UPDATE_USER_NAME = #{updateUserName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+    <sql id="table_name">  t_user_info </sql>
+
+    <!-- 根据搜索条件获取数据 -->
+    <sql id="condition_sql">
+        <if test="accountNo != null and accountNo != ''">and account_no = #{accountNo,jdbcType=VARCHAR}</if>
+        <if test="status != null and status != ''">and status = #{status,jdbcType=VARCHAR}</if>
+        <if test="userNo != null and userNo != ''">and user_no = #{userNo,jdbcType=VARCHAR}</if>
+        <if test="userName != null and userName != ''">and USER_NAME LIKE concat(#{userName,jdbcType=VARCHAR},"%")</if>
+        <if test="mobile != null and mobile != ''">and mobile = #{mobile,jdbcType=VARCHAR}</if>
+    </sql>
+
+    <select id="listBy" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="listPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+        order by create_time desc limit #{pageFirst}, #{pageSize}
+    </select>
+
+    <!--
+     * 查询：状态可用 + 未与商户绑定的用户
+     -->
+    <select id="listPageWithStatusAndUserNo" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select * from
+        <include refid="table_name"/>
+        <where>
+            <if test="status != null and status != ''">
+                STATUS = #{status}
+            </if>
+            and (USER_NO is null or USER_NO = '')
+        </where>
+        order by create_time desc limit #{pageFirst}, #{pageSize}
+    </select>
+
+    <!-- 分页查询时要用到的总数统计 -->
+    <select id="listPageCount" parameterType="java.util.Map"
+            resultType="java.lang.Long">
+        select count(1) from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition_sql"/>
+        </where>
+    </select>
+
+    <!-- 密码重置为123456-->
+    <update id="reSetPwd" parameterType="com.douples.pay.user.entity.UserInfo">
+        UPDATE
+        <include refid="table_name"/>
+        SET
+        PASSWORD=#{password}
+        <where>
+            ID = #{id}
+        </where>
+    </update>
+</mapper>
